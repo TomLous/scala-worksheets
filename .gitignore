@@ -1,0 +1,13 @@
+# Created by .ignore support plugin (hsz.mobi)
+### basic(2) template
+.idea*
+*.log
+.DS_Store
+project/project
+target/
+.idea/
+lifting/
+project/project/
+project/target/
+spark-warehouse/
+
