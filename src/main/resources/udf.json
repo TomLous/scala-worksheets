@@ -1,0 +1,5 @@
+{"username":"uname1","devices":[{"type":"a","id":"b"},{"type":"a","id":"b"},{"type":"a","id":"b"}]}
+{"username":"uname2","devices":[]}
+{"username":"uname3","devices":[{"type":"a","id":"b"},{"type":"a","id":"b"}]}
+{"username":"uname4","devices":[{"type":"a","id":"b"}]}
+{"username":"uname2"}
