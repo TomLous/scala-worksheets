@@ -1,5 +1,7 @@
-import java.io.{File, PrintWriter}
+import java.io._
+
 import org.apache.spark.sql.{SaveMode, SparkSession}
+
 import scala.io.Source
 
 val spark = SparkSession.builder()
@@ -12,7 +14,9 @@ import spark.implicits._
 
 /* Some code to test */
 case class Book(author: String)
+
 case class Review(id: Int)
+
 org.apache.spark.sql.catalyst.encoders.OuterScopes.addOuterScope(this)
 
 
@@ -57,7 +61,7 @@ reviewFrame
   .save("/tmp/review") // store to temp location
 
 
-def concatFiles(path:String):List[String] = {
+def concatFiles(path: String): List[String] = {
   new File(path)
     .listFiles
     .filter(
@@ -68,8 +72,45 @@ def concatFiles(path:String):List[String] = {
     .toList
 }
 
-val lines = List("<xml>","<library>") ++ concatFiles("/tmp/books/") ++ concatFiles("/tmp/review/") ++ List("</library>")
-new PrintWriter("/tmp/target.xml"){
-  write(lines.mkString("\n"))
-  close
+
+def outputConcatFiles(path: String, outputFile: File): Unit = {
+  new File(path)
+    .listFiles
+    .filter(
+      _.getName.startsWith("part") // get all part-xxx files only (should be only 1)
+    )
+    .foreach(file => {
+      val writer = new BufferedOutputStream(new FileOutputStream(outputFile, true))
+      val reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))
+
+      try {
+        Stream.continually(reader.readLine())
+          .map(line => {
+            if (line != null)
+              writer.write(s"    $line\n".getBytes)
+
+            line
+          })
+          .takeWhile(_ != null)
+
+      } catch {
+        case e: Exception => println(e.getMessage)
+      } finally {
+        writer.close()
+        reader.close()
+      }
+    })
 }
+
+val outputFile = new File("/tmp/target2.xml")
+new PrintWriter(outputFile) { write("<xml>\n<library>\n"); close}
+outputConcatFiles("/tmp/books/", outputFile)
+outputConcatFiles("/tmp/review/", outputFile)
+new PrintWriter(new FileOutputStream(outputFile, true)) { append("</library>"); close}
+
+
+//val lines = List("<xml>","<library>") ++ concatFiles("/tmp/books/") ++ concatFiles("/tmp/review/") ++ List("</library>")
+//new PrintWriter("/tmp/target.xml"){
+//  write(lines.mkString("\n"))
+//  close
+//}
