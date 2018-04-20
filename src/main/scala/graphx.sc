@@ -21,25 +21,29 @@ import spark.implicits._
 
 /* Some code to test */
 
-
-val df_1 = spark.sqlContext
-  .read
-  .option("mode", "PERMISSIVE")
-  .option("header", "true")
-  .option("delimiter", ",")
-  .csv("src/main/resources/graphx.csv")
-
-
-val flightsFromTo = df_1.select($"Origin",$"Dest")
-val airportCodes = df_1.select($"Origin", $"Dest").flatMap(x => Iterable(x(0).toString, x(1).toString))
-
-val airportVertices: RDD[(VertexId, String)] = airportCodes.distinct().map(x => (MurmurHash3.stringHash(x).toLong, x)).rdd
-
-val airportEdges:RDD[Edge[String]] = df_1.select($"Origin",$"Dest").as[(String, String)].map{
-  case (origin, dest) => Edge(MurmurHash3.stringHash(origin), MurmurHash3.stringHash(dest), s"$origin->$dest")
-}.rdd
-
-Graph(airportVertices, airportEdges)
+//
+//val df_1 = spark.sqlContext
+//  .read
+//  .option("mode", "PERMISSIVE")
+//  .option("header", "true")
+//  .option("delimiter", ",")
+//  .csv("src/main/resources/graphx.csv")
 
 
-airportCodes.show()
+val df_1 = spark.sqlContext.read.format("com.databricks.spark.csv").option("header", "true").load("src/main/resources/graphx.csv")
+
+val flightsFromTo = df_1.select($"Origin",$"Dest").rdd
+val airportCodes = df_1.select($"Origin", $"Dest").flatMap(x => Iterable(x(0).toString, x(1).toString)).rdd
+
+val airportVertices: RDD[(VertexId, String)] = airportCodes.distinct().map(x => (MurmurHash.stringHash(x), x))
+//val airportVertices: RDD[(VertexId, String)] = airportCodes.distinct().map(x => (MurmurHash.stringHash(x), x))
+val defaultAirport = ("Missing")
+
+val flightEdges = flightsFromTo.map(x =>
+  ((MurmurHash.stringHash(x(0).toString),MurmurHash.stringHash(x(1).toString)), 1)).map(x => Edge(x._1._1, x._1._2,x._2))
+
+
+val graph = Graph(airportVertices, flightEdges, defaultAirport)
+graph.persist() // we're going to be using it a lot
+
+
