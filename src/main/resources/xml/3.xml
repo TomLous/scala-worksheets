@@ -1,0 +1,8 @@
+<log>
+    <id>123456A</id>
+    <TimeData>
+        <colNames>dTim,colA,colB,colC,</colNames>
+        <data>2011-03-27T11:18:13.350Z,0.129,35.988,0,120.307</data>
+        <data>2011-03-27T11:18:43.897Z,0.128,35.017,0,120.307</data>
+    </TimeData>
+</log>
