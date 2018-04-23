@@ -1,11 +1,7 @@
-import java.io._
-
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{SaveMode, SparkSession}
-
-import scala.io.Source
 
 val spark = SparkSession.builder()
   .master("local[3]")
@@ -39,7 +35,7 @@ val df = spark
 
 // Could be computationally heavy, maybe cache df first if possible, otherwise run it on a sample, otherwise hardcode possible colums
 val colNames = df
-  .select(explode(split($"TimeData.colNames",",")).as("col"))
+  .select(explode(split($"TimeData.colNames", ",")).as("col"))
   .distinct()
   .filter($"col" =!= lit("dTim") && $"col" =!= "")
   .collect()
@@ -47,10 +43,13 @@ val colNames = df
   .toList
   .sorted
 
+// or list all possible columns
+//val colNames = List("colA", "colB", "colC")
+
 
 // Based on XML colNames and data are comma seprated strings that have to be split. Could be done using sql split function, but this UDF maps the columns to the correct field
-def mapColsToData = udf((cols:String, data:Seq[String]) =>
-  if(cols == null || data == null) Seq.empty[Map[String, String]]
+def mapColsToData = udf((cols: String, data: Seq[String]) =>
+  if (cols == null || data == null) Seq.empty[Map[String, String]]
   else {
     data.map(str => (cols.split(",") zip str.split(",")).toMap)
   }
@@ -63,9 +62,9 @@ denorm.show(false)
 
 // now create column for each map value, based on predef / found columnNames
 val columized = denorm.select(
-  $"id" ::
-  $"data.dTim".cast(TimestampType).alias("dTim") ::
-    colNames.map(colName => col(s"data.$colName").as(colName)): _*
+  $"id",
+  $"data.dTim".cast(TimestampType).alias("dTim"),
+  $"data"
 )
 
 columized.show()
@@ -81,12 +80,8 @@ val resampleRate = 2
 val batched = columized
   .withColumn("batchId", floor((row_number().over(windowSpec) - lit(1)) / lit(resampleRate)))
   .groupBy($"id", $"batchId")
-  .agg(
-    collect_list(struct(
-        $"dTim" ::
-        colNames.map(col(_)): _*
-    )).as("data"))
-    .drop("batchId")
+  .agg(collect_list($"data").as("data"))
+  .drop("batchId")
 
 batched.show(false)
 
@@ -119,7 +114,6 @@ batched.repartition(1).write.mode(SaveMode.Overwrite).json("/tmp/xml")
 //  .filter(col("n") === nthRow)
 //  .drop("n")
 //.show()
-
 
 
 //df.show()
