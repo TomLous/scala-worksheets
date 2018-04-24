@@ -8,8 +8,7 @@ object Classes {
 
   class HistoryHeader(numDetailRecords: Int, calcDate: String, historyRecords: List[HistoryDetail]) extends Serializable
 
-  class Grandchild(name:String)
-  class Child(grandchild: List[Grandchild])
+
 
 
 }
