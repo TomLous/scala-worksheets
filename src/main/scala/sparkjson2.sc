@@ -11,6 +11,14 @@ val spark = SparkSession.builder()
 import spark.implicits._
 
 val df = spark.read.option("header","true").option("inferSchema","true").json("src/main/resources/complexjson.json")
-
-df.show()
 df.printSchema()
+
+val nested = df
+  .select(explode($"data.InterfaceEntity").alias("l1"))
+  .select(explode($"l1.l1PhysIf").alias("l2"))
+  .select($"l2.rmonIfIn.attributes".alias("l3"))
+  .select($"l3.broadcastPkts", $"l3.discards", $"l3.errors", $"l3.multicastPkts", $"l3.packetRate")
+
+  nested.show(false)
+
+nested.printSchema()
