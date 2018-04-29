@@ -1,0 +1,4 @@
+{"node_id_str":"1", "data":{"InterfaceEntity":[{"l1PhysIf":{"rmonIfIn":{"attributes":{"broadcastPkts":"1","discards":"1","errors":"1","multicastPkts":"1","nUcastPkts":"1","packetRate":"1"}}}}]}}
+{"node_id_str":"2", "data":{"InterfaceEntity":[{"l1PhysIf":{"rmonIfIn":{"attributes":{"broadcastPkts":"2","discards":"2","errors":"2","multicastPkts":"2","nUcastPkts":"2","packetRate":"2"}}}}]}}
+{"node_id_str":"3", "data":{"InterfaceEntity":[{"l1PhysIf":{"rmonIfIn":{"attributes":{"broadcastPkts":"3","discards":"3","errors":"3","multicastPkts":"3","nUcastPkts":"3","packetRate":"3"}}}}]}}
+{"node_id_str":"4", "data":{"InterfaceEntity":[{"l1PhysIf":{"rmonIfIn":{"attributes":{"broadcastPkts":"4","discards":"4","errors":"4","multicastPkts":"4","nUcastPkts":"4","packetRate":"4"}}}}]}}
