@@ -4,10 +4,7 @@ import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 import org.apache.spark.sql.functions._
 
 
-/**
-  * Created by Tom Lous on 29/04/2018.
-  * Copyright © 2018 Datlinq B.V..
-  */
+
 object graphdistancematrix extends App {
 
   val spark = SparkSession.builder().master("local[2]").appName("test").getOrCreate()

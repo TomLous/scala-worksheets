@@ -4,9 +4,6 @@ import org.apache.spark.ml.linalg.{SparseVector, Vectors}
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.sql.functions._
 
-
-
-
 val spark = SparkSession.builder()
   .master("local[2]")
   .appName("test")

@@ -7,10 +7,7 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.catalyst.ScalaReflection
 import scala.reflect.runtime.universe._
 
-///**
-//  * Created by Tom Lous on 06/06/17.
-//  * Copyright © 2017 Datlinq B.V..
-//  */
+
 //object Reflection {
 //
 //
