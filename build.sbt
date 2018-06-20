@@ -28,7 +28,7 @@ libraryDependencies ++= Seq(
   "org.mongodb.spark" %% "mongo-spark-connector" % "2.2.0",
   "com.databricks" %% "spark-xml" % "0.4.1",
   "com.thoughtworks.xstream" % "xstream" % "1.4.10",
-  "harsha2010" %% "magellan" % "1.0.7-SNAPSHOT",
+//  "harsha2010" %% "magellan" % "1.0.7",
 
 "com.github.nscala-time" %% "nscala-time" % "2.16.0",
   "codes.reactive" %% "scala-time" % "0.4.1"
