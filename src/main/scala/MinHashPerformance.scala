@@ -1,5 +1,5 @@
 import org.apache.spark.ml.Pipeline
-import org.apache.spark.ml.feature.{HashingTF, MinHashLSH, MinHashLSHModel, Tokenizer}
+import org.apache.spark.ml.feature._
 import org.apache.spark.ml.param.{IntParam, Param}
 import org.apache.spark.ml.util.Identifiable
 import org.apache.spark.sql.SparkSession
@@ -15,8 +15,12 @@ object MinHashPerformance  extends App {
   val numHashTables = 2
 
   // Pipeline
-  val tokenizer = new ShingleTokenizer()
-    .setShingleSize(shingleSize)
+//  val tokenizer = new ShingleTokenizer()
+//    .setShingleSize(shingleSize)
+//    .setInputCol("location")
+//    .setOutputCol("parts")
+
+  val tokenizer = new Tokenizer()
     .setInputCol("location")
     .setOutputCol("parts")
 
@@ -34,14 +38,14 @@ object MinHashPerformance  extends App {
     .setStages(Array(tokenizer, hashingTF, minHash))
 
   // test tokenizer
-  val testTokenize = tokenizer.asInstanceOf[ShingleTokenizer].createTransformFunc
-  println(testTokenize("Denville|07834|NJ|New Jersey"))
+//  val testTokenize = tokenizer.asInstanceOf[ShingleTokenizer].createTransformFunc
+//  println(testTokenize("Denville|07834|NJ|New Jersey"))
 
 
 
   // Spark
   logger.info("Start")
-  val spark = SparkSession.builder().master("local[*]").appName("test").getOrCreate()
+  val spark = SparkSession.builder().master("local[*]").appName("test").config("spark.ui.enabled", "true").getOrCreate()
   import spark.implicits._
 
   logger.info("Load cities")
@@ -75,7 +79,7 @@ object MinHashPerformance  extends App {
   val minHashLSHModel = model.stages.last.asInstanceOf[MinHashLSHModel]
 
   logger.info("approxSimilarityJoin")
-  val joined = minHashLSHModel.approxSimilarityJoin(citiesTransformed, checkLocationsTransformed, 0.6)
+  val joined = minHashLSHModel.approxSimilarityJoin(checkLocationsTransformed, citiesTransformed,0.6)
 
   logger.info(s"Joined info: # records ${joined.count}, # partitions ${joined.rdd.partitions.length}")
   joined.show(3)
