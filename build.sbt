@@ -32,10 +32,12 @@ libraryDependencies ++= Seq(
   "com.databricks" %% "spark-xml" % "0.4.1",
   "com.thoughtworks.xstream" % "xstream" % "1.4.10",
 //  "harsha2010" %% "magellan" % "1.0.7",
+  "com.rockymadden.stringmetric" %%   "stringmetric-core" % "0.27.4",
 
 "com.github.nscala-time" %% "nscala-time" % "2.16.0",
   "codes.reactive" %% "scala-time" % "0.4.1",
   "org.slf4j" % "slf4j-api" % slf4jVersion
+  
 
 ).map(_.exclude("ch.qos.logback", "*"))
 
